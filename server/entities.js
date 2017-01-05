@@ -72,9 +72,7 @@ var 	entities = {},
 
 module.exports = {
 	create: function (parameters) {
-		retur
-
-			n create(parameters);
+		return create(parameters);
 
 	},
 	remove: function (id) {

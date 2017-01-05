@@ -1,10 +1,13 @@
 "use strict";
 
 var 
-  
-  io = require('socket.io').listen(6660),
+  restify = require('restify'),
+  server = restify.createServer(),
+  io = require('socket.io').listen(server.server),
+  path = require('path'),
   entities = require('./entities.js'),
   player = require('./player.js'),
+
   scoreboard =  {},
   playerIterator = 1,
   last,
@@ -164,6 +167,16 @@ io.sockets.on('connection', function (socket) {
       );
     }
   },1000);
+
+// Serve static files
+server.get(/\/?.*/, restify.serveStatic({
+    directory: path.join(process.cwd(), 'client')
+}));
+
+// Start webserver
+server.listen(process.env.PORT || 6660, function() {
+  console.log('%s listening at %s', server.name, server.url);
+});
 
 // Start iteration
 iterate();

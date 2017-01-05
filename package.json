@@ -1,0 +1,14 @@
+{ "name": "netroids",
+  "description": "HTML5 Game",
+  "version": "0.0.1",
+  "devDependencies": { },
+  "dependencies": {
+  	"socket.io": "*",
+  	"restify": "*",
+  	"uuid": "*",
+  	"klon": "*"
+  },
+  "scripts": {
+  	"start": "node server"
+  }
+}

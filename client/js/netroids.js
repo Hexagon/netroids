@@ -44,8 +44,9 @@ define(['viewport', 'minimap', 'entities', 'network', 'textures', 'dom'], functi
 	], function () {
     	
     	// Textures ok, go on connecting
-    	dom.addLoadStatus('Connecting to netroids.56k.guru ...');
-		network.connect('http://netroids.56k.guru');
+    	console.log(window.location);
+    	dom.addLoadStatus('Connecting to ' + window.location.host + ' ...');
+		network.connect();
 
 		// ... and creating viewports
 		dom.addLoadStatus('Creating viewport ...');
