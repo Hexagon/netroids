@@ -170,7 +170,8 @@ io.sockets.on('connection', function (socket) {
 
 // Serve static files
 server.get(/\/?.*/, restify.serveStatic({
-    directory: path.join(process.cwd(), 'client')
+    directory: path.join(process.cwd(), 'client'),
+    default: 'index.html'
 }));
 
 // Start webserver
