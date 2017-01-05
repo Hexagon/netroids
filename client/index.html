@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Netroids</title>
+        <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet">
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+
+        <div id="loading" class="screen">
+            <div class="center">
+                <h1>NETROIDS</h1>
+                <div id="loadstatus">
+                    <h4>Loading ...</h4>
+                </div>
+            </div>
+        </div>
+
+        <div id="login" class="screen hidden">
+            
+        </div>
+
+        <!-- In game -->
+        <div id="game" class="screen hidden">
+            <div id="hud">
+                <div class="section">
+                    <h1>NETROIDS</h1>
+                </div>
+                <div class="section">
+                    <p>
+                        <span class="title">CONNECTION</span>
+                        <span class="value bad" id="connection">DOWN</span>
+                    </p>
+                    <p>
+                        <span class="title">PING</span>
+                        <span class="value" id="latency">0ms</span>
+                    </p>
+                    <!--<p>
+                        <span class="title">PLAYERS</span>
+                        <span class="value" id="players">0</span>
+                    </p>
+                    <p>
+                        <span class="title">ASTEROIDS</span>
+                        <span class="value" id="asteroids">0</span>
+                    </p>-->
+                </div>
+                <div class="section noborder">
+                    <table>
+                    <thead>
+                        <tr>
+                            <td>PLAYER</td>
+                            <td>S</td>
+                            <td>K</td>
+                            <td>D</td>
+                            <td>PING</td>
+                        </tr>
+                    </thead>
+                    <tbody id="scoreboard">
+
+                    </tbody>
+                    </table>
+                </div>
+                <div class="section" id="minimap">
+
+                </div>
+            </div>
+        </div>
+
+    	<!-- Code -->
+    	<script src="js/vendor/require.js" data-main="js/netroids"></script>
+
+    </body>
+</html>

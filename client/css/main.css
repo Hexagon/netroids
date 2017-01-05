@@ -1,0 +1,74 @@
+/* Reset */
+body, html { overflow: hidden; }
+* { padding: 0px; margin: 0px; user-select: none; cursor: crosshair; font-family: 'Share Tech Mono';}
+
+/* Loading screen */
+.screen {
+	display: block;
+	background-color: rgb(0,0,0);
+	color: rgb(196,196,255);
+	width: 100vw;
+	height: 100vh;
+}
+
+.center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Custom */
+.texture { display: none; }
+#hud {
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 300px;
+	height: 100vh;
+	background-color: rgb(0,0,0);
+	border-left: rgb(64,64,128) 1px solid;
+	color: rgb(196,196,255);
+}
+#minimap {
+	padding: 0px;
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
+	border-top: rgba(128,128,255,0.4) 1px solid;
+
+	border-bottom: 0px none;
+}
+.section {
+	padding:20px;
+	border-bottom: rgba(128,128,255,0.4) 1px solid;
+}
+.noborder {
+	border-bottom: 0px none;
+}
+#logo {
+	font-size: 2rem;
+}
+.title {
+	display: inline-block;
+	width: 100px;
+}
+.status {
+	display: inline-block;
+	width: 160px;
+}
+.good {
+	color: rgba(196,255,196,0.7);
+}
+.bad {
+	color: rgba(255,196,196,0.7);
+}
+.section table {
+	width: 100%;
+}
+.section table thead {
+	color: rgba(220,220,255,0.7);
+}
+.hidden {
+	display: none;
+}
