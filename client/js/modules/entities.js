@@ -11,7 +11,7 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 			let oldEntity = entities[freshEntity.uuid];
 
 			entities[freshEntity.uuid] = freshEntity;
-
+			
 			if (oldEntity) {
 				entities[freshEntity.uuid].p.x = (entities[freshEntity.uuid].p.x + oldEntity.p.x * 3) / 4;
 				entities[freshEntity.uuid].p.y = (entities[freshEntity.uuid].p.y + oldEntity.p.y * 3) / 4;
@@ -34,9 +34,6 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 	bus.on('network:remove', function (data) {
 		if (!data) return;
 		remove(data);
-		if (data === playerUUID) {
-			socket.emit('respawn');	
-		}
 	});
 
 	bus.on('network:player', function (data) {

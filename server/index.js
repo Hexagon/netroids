@@ -31,8 +31,17 @@ var
       // Entity added
       io.emit('entities', entity);
     },function (uuid) {
-      // Entity removed
+
       io.emit('remove', uuid);
+      
+      // Respawn?
+      if(entities.get(uuid).t == "player") {
+        // Respawn
+        setTimeout(function () {
+          io.emit('entities', [player.create(uuid, entities)]);  
+        },250);
+      }
+        
     },function (uuid) {
       // Kill
       if(scoreboard[uuid]) scoreboard[uuid].k++;
@@ -55,18 +64,20 @@ var
 // Communicate
 io.sockets.on('connection', function (socket) {
   
-  var timeout;
+  var timeout,
+      playerUUID;
 
   socket.pings = 0;
   socket.latency = 0;
 
   // Create player
-  socket.player = player.create();
-  socket.emit('player', socket.player.uuid);
+  playerUUID = player.create(undefined, entities).uuid;
+  
+  socket.emit('player', playerUUID);
 
-  scoreboard[socket.player.uuid] = {
+  scoreboard[playerUUID] = {
     n: "Player " + (playerIterator++),
-    uuid: socket.player.uuid,
+    uuid: playerUUID,
     s: 0,
     k: 0,
     d: 0,
@@ -74,14 +85,6 @@ io.sockets.on('connection', function (socket) {
   };
 
   sbUpdated();
-
-  // Player requested respawn
-  socket.on('respawn', function () {
-    socket.player = player.create(socket.player.uuid);
-    socket.emit('player', socket.player.uuid);
-    socket.broadcast.emit('entities', [socket.player]);
-    // Update scoreboard
-  });
 
   // Send all entities
   var tmp = entities.all();
@@ -91,34 +94,37 @@ io.sockets.on('connection', function (socket) {
   socket.on('disconnect', function () {
 
      // Remove from socket list
-     delete scoreboard[socket.player.uuid];
+     delete scoreboard[playerUUID];
      sbUpdated();
 
      // Other stuff (this is bridge)
-     entities.remove(socket.player.uuid);
-     socket.broadcast.emit('remove', socket.player.uuid);
+     entities.remove(playerUUID);
+     io.emit('remove', playerUUID);
 
   });
 
   // Get update of keys
   socket.on('keys', function (data) {
-    socket.player.keys = data;
+    let player = entities.get(playerUUID);
+    if(data && player) {
+      player.keys = data;
+    }
   });
 
   // Get update of mouse
   socket.on('mouse', function (data) {
-    if(data.v) {
+    let player = entities.get(playerUUID);
+    if(data.v && player) {
       // Onödigt att lägga detta på spelaren?
-      socket.player.mouse = data;
+      player.mouse = data;
     }
   });
 
   // Handle ping
   socket.on('ping-response', function (pingTime) {
     if(pingTime && pingTime.t) {
-
       socket.latency = Math.round(((new Date().getTime() - pingTime.t) + socket.latency) / ((socket.pings++) == 0 ? 1 : 2));
-      scoreboard[socket.player.uuid].l = socket.latency;
+      scoreboard[playerUUID].l = socket.latency;
     }
   });
 

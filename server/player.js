@@ -1,7 +1,5 @@
-var entities = require('./entities.js');
-
 module.exports = {
-	create: function (uuid) {
+	create: function (uuid, entities) {
 		var entity = entities.create({
 			"uuid": uuid,
 			"i": "Player 1",

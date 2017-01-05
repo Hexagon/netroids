@@ -5,29 +5,8 @@ const
 	uuid = require('uuid'),
 	klon = require('klon');
 
-/*var 		length = function (e1, e2, both) {
-			let delta = e2 ? exports.sub(e1, e2) : e1,
-			    pow = exports.mul(delta, delta);
-			if (both) {
-				return [delta, Math.sqrt(pow.x + pow.y)];
-			} else {
-				return Math.sqrt(pow.x + pow.y);
-			}
-		},
-		sub = function (e1, e2) {
-			return {
-				x: e1.x - e2.x,
-				y: e1.y - e2.y
-			};
-		},
-		mul = function (e1, e2) {
-			return {
-				x: e1.x * (e2.x ? e2.x : e2),
-				y: e1.y * (e2.y ? e2.y : e2)
-			}
-		};*/
-
-var 	entities = {},
+var 	
+	entities = {},
 	defaults = {
 		"n": "UFO",
 		"p": {
@@ -52,19 +31,17 @@ var 	entities = {},
 	},
 	create = function (parameters) {
 		var freshEntity = klon(parameters, parameters.uuid ? entities[parameters.uuid] : klon(defaults,{}) );
-
+		
 		// Create uuid if not exists
 		if(!freshEntity.uuid) {
 			freshEntity.uuid = uuid();
 		}
-
-		freshEntity.lc = new Date().getTime();
-
+		
 		// Append to inventory
 		entities[freshEntity.uuid] = freshEntity;
-
+		
 		// Return the new entity
-		return freshEntity;
+		return entities[freshEntity.uuid];
 	},
 	distance = function (e1, e2) {
 		return Math.abs(Math.sqrt(Math.pow((e1.x-e2.x),2) + Math.pow((e1.y-e2.y),2)));
@@ -77,6 +54,9 @@ module.exports = {
 	},
 	remove: function (id) {
 		delete entities[id];
+	},
+	get: function (id) {
+		return entities[id];
 	},
 	advance: function (advanceMs, updatedCallback, removedCallback, killCallback, deathCallback, scoreCallback) {
 
