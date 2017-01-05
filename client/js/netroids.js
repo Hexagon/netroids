@@ -34,12 +34,11 @@ define(['viewport', 'minimap', 'entities', 'network', 'textures', 'dom'], functi
 	dom.addLoadStatus("Loading static assetts ...");
 
     textures.load([
-		["background","assets/gfx/6924259-space-purple-nebula-1.jpg"],
+		["background","assets/gfx/space.jpg"],
 		["seamlessSpace","assets/gfx/seamless-space.png"],
-		["asteroid2","assets/gfx/hell_planet.png"],
-		["asteroid1","assets/gfx/rocktropia.png"],
-		["ship","assets/gfx/Spaceship-PNG-File.png"],
-		["flame","assets/gfx/jet_flame_triple.png"]
+		["asteroid1","assets/gfx/asteroid.png"],
+		["ship","assets/gfx/spaceship.png"],
+		["flame","assets/gfx/jet-flame.png"]
 
 	// Textures successfully loaded
 	], function () {
