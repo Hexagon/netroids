@@ -80,9 +80,10 @@ define(['util/castrato'], function (bus) {
 	
 	window.addEventListener('touchend', function (e) {
 		e.preventDefault();
-		if(e.touches.length == 1) {
+		console.log(e.touches);
+		if(e.touches.length == 0) {
 			setState("accelerate", false);
-		} else if(e.touches.length == 2) {
+		} else if(e.touches.length == 1) {
 			setState("accelerate", true);
 			setState("fire", false);
 		}
