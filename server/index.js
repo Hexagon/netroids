@@ -103,20 +103,12 @@ io.sockets.on('connection', function (socket) {
 
   });
 
-  // Get update of keys
-  socket.on('keys', function (data) {
+  // Get update of mouse
+  socket.on('controls', function (data) {
     let player = entities.get(playerUUID);
     if(data && player) {
-      player.keys = data;
-    }
-  });
-
-  // Get update of mouse
-  socket.on('mouse', function (data) {
-    let player = entities.get(playerUUID);
-    if(data.v && player) {
       // Onödigt att lägga detta på spelaren?
-      player.mouse = data;
+      player.controls = data;
     }
   });
 

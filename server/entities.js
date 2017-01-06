@@ -63,6 +63,7 @@ module.exports = {
 		var entity, entityIdx, innerEntity, innerEntityIdx, updated=[];
 
 		for(entityIdx in entities) {
+
 			entity = entities[entityIdx];
 			updated[entityIdx] = false;
 
@@ -79,21 +80,52 @@ module.exports = {
 			entity.lc = new Date().getTime();
 
 			// Change stuff?
-			if(entity.mouse && entity.mouse.b[0]) {
-				entity.a.m = Math.min(1,distance(entity.mouse.v,{x:0,y:0}))/50;
-			} else if (entity.mouse) {
-				entity.a.m = 0;
-			}
-			if(entity.mouse) {
-				entity.a.d = -Math.atan2(entity.mouse.v.x, entity.mouse.v.y)+Math.PI/2;
-				if(entity.keys && entity.keys.ShiftLeft) {
+			if (entity.controls) {
+
+				if(entity.controls.accelerate) {
+					entity.a.m = Math.min(1,distance(entity.controls.rotation,{x:0,y:0}))/50;
+				} else {
+					entity.a.m = 0;
+				}
+
+				entity.a.d = -Math.atan2(entity.controls.rotation.x, entity.controls.rotation.y)+Math.PI/2;
+
+				if(entity.controls.reverse) {
 					entity.a.d += Math.PI;
 				}
-				entity.r = entity.a.d;
-			}
 
-			// Apply rotation to acceleration
-			//if(entity.r) entity.a.d += entity.r * advanceMs;
+				entity.r = entity.a.d;
+
+				updated[entityIdx] = true;
+			
+				if ( entity.controls.fire && (new Date() - (entity.lastFire || 0)) > 250 ) {
+					
+					entity.lastFire = new Date();
+
+					// Fire!
+					var nVel = {
+						x: entity.v.x + Math.cos(entity.a.d)*0.75,
+						y: entity.v.y + Math.sin(entity.a.d)*0.75
+					};
+
+					var newEntity = create({
+						p: entity.p,
+						v: nVel,
+						t: "ammo",
+						m: 5,
+						o: entity.uuid,
+						hp: {
+							current: 5,
+							max: 5
+						},
+						ttl: 75
+					});
+
+					updated[newEntity.uuid] = true;
+
+				}
+
+			}
 
 			// Apply acceleration to velocity
 			if(entity.a.m) {
@@ -104,40 +136,6 @@ module.exports = {
 			// Apply velocity to position
 			entity.p.x += entity.v.x * advanceMs;
 			entity.p.y += entity.v.y * advanceMs;
-
-			// Alwaus send update from entities that can be controlled
-			if(entity.mouse || entity.keys) {
-				updated[entityIdx] = true;
-				//updatedCallback(entity);
-			}
-
-			// Fire!
-			if(entity.keys && (entity.keys.Space || entity.keys.ControlLeft) && new Date() - (entity.lastFire || 0) > 250 ) {
-				
-				entity.lastFire = new Date();
-
-				// Fire!
-				var nVel = {
-					x: entity.v.x + Math.cos(entity.a.d)*0.75,
-					y: entity.v.y + Math.sin(entity.a.d)*0.75
-				};
-
-				var newEntity = create({
-					p: entity.p,
-					v: nVel,
-					t: "ammo",
-					m: 5,
-					o: entity.uuid,
-					hp: {
-						current: 5,
-						max: 5
-					},
-					ttl: 75
-				});
-
-				updated[newEntity.uuid] = true;
-
-			}
 
 			// Collide
 			for(innerEntityIdx in entities) {
@@ -193,6 +191,7 @@ module.exports = {
 				}
 			}
 		}
+		
 		updatedCallback(updatedEntities);
 
 	},

@@ -202,10 +202,10 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 		createPattern("seamlessSpace", canvas.getContext());
 
 		// Translate mouse position to acceleration vector
-		bus.on("mouse:state", function (data) {
-			var accelPosition = vector.sub(data.position, screenCenter),
+		bus.on("pointer:position", function (data) {
+			var accelPosition = vector.sub(data, screenCenter),
 				accelVectorNormal = vector.div(accelPosition, controlCircleRadius);
-			bus.emit('mouse:vector', { b: data.buttons, v: accelVectorNormal });
+			bus.emit('pointer:vector', accelVectorNormal );
 		});
 
 	};

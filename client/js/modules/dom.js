@@ -1,4 +1,4 @@
-define(['dom/keys', 'dom/mouse', 'dom/hud'], function (keys, mouse, hud) {
+define(['dom/controls', 'dom/hud'], function (controls, hud) {
 
 	var views = {
 			loading: document.getElementById('loading'),
