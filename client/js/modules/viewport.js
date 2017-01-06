@@ -98,7 +98,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 
 					ctx.save();
 					ctx.globalAlpha=0.8;
-					ctx.drawImage(textures.get("flame"),Math.round(-entity.m/3),Math.round(-entity.m-(entity.m*20*entity.a.m)),Math.round(entity.m*2/3),Math.round((entity.m*20*entity.a.m)));
+					ctx.drawImage(textures.get("flame"),Math.round(-entity.m/3),Math.round(-entity.m-(entity.m*20*entity.a.m)*3),Math.round(entity.m*2/3),Math.round((entity.m*20*entity.a.m)*3));
 					ctx.restore();
 
 				}

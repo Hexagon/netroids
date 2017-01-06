@@ -18,7 +18,7 @@ define(function() {
 
 		// Internal functions
 		onTimeout = function (texture) {
-			error('Load of texture "' + texture[1] + '" timed out.');
+			error && error('Load of texture "' + texture[1] + '" timed out.');
 		},
 		onLoad = function (texture, img) {
 			left--;

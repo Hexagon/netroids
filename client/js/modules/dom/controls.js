@@ -68,12 +68,24 @@ define(['util/castrato'], function (bus) {
 
 	window.addEventListener('touchstart', function (e) {
 		e.preventDefault();
-		setState("accelerate", true);
+		if(e.touches.length == 1) {
+			setState("accelerate", true);	
+			setState("fire", false);
+		} else {
+			setState("fire", true);
+			setState("accelerate", false);
+		}
+		
 	});
 	
 	window.addEventListener('touchend', function (e) {
 		e.preventDefault();
-		setState("accelerate", false);
+		if(e.touches.length == 1) {
+			setState("accelerate", false);
+		} else if(e.touches.length == 2) {
+			setState("accelerate", true);
+			setState("fire", false);
+		}
 	});
 
 	window.addEventListener('touchmove', function (e) {
