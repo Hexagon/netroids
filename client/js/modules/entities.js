@@ -5,19 +5,27 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 
 		playerUUID,
 
+		latency = 0,
+
 		create = function (freshEntity) {
 			if (!freshEntity) return;
 
-			let oldEntity = entities[freshEntity.uuid];
+			let oldEntity = entities[freshEntity.u];
 
-			entities[freshEntity.uuid] = freshEntity;
+			entities[freshEntity.u] = freshEntity;
 			
 			if (oldEntity) {
-				entities[freshEntity.uuid].p.x = (entities[freshEntity.uuid].p.x + oldEntity.p.x * 3) / 4;
-				entities[freshEntity.uuid].p.y = (entities[freshEntity.uuid].p.y + oldEntity.p.y * 3) / 4;
+				entities[freshEntity.u].p.x = (entities[freshEntity.u].p.x + oldEntity.p.x * 3) / 4;
+				entities[freshEntity.u].p.y = (entities[freshEntity.u].p.y + oldEntity.p.y * 3) / 4;
 			}
 
-			return entities[freshEntity.uuid];
+			if (freshEntity.u == playerUUID) {
+				bus.emit('entities:playerdata', freshEntity);
+			}
+
+			freshEntity.latency = latency;
+
+			return entities[freshEntity.u];
 		},
 
 		remove = function (id) {
@@ -31,14 +39,21 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 		}
 	});
 
+	bus.on('network:latency', function (data) {
+		if (!data) return;
+		latency = data;
+	});
+
 	bus.on('network:remove', function (data) {
 		if (!data) return;
 		remove(data);
 	});
 
 	bus.on('network:player', function (data) {
+		
 		if (!data) return;
 		playerUUID = data;
+
 	});
 
 	return {
@@ -52,8 +67,10 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 				let entity = entities[entityIdx];
 
 				// Apply velocity to position
-				entity.p.x += entity.v.x * (advanceMs);
-				entity.p.y += entity.v.y * (advanceMs);
+				entity.p.x += entity.v.x * (advanceMs + entity.latency / 2);
+				entity.p.y += entity.v.y * (advanceMs + entity.latency / 2);
+
+				entity.latency = 0;
 
 			}
 

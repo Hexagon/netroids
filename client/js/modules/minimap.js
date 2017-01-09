@@ -20,18 +20,18 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector'], function(bus,
 		},
 
 		drawEntity = function (entity, ctx) {
-				ctx.save();
-				ctx.translate(Math.round(entity.p.x/200+center.x),Math.round(entity.p.y/200+center.y));
-				if (entity.t == "player") {
-					ctx.fillStyle="red";	
-				} else if (entity.t == "asteroid") {
-					ctx.fillStyle = "white";
-				} else {
-					ctx.fillStyle = "gray";
-				}
+			if(entity.t === "bullet") return;
+			
+			ctx.save();
+			ctx.translate(Math.round(entity.p.x/200+center.x),Math.round(entity.p.y/200+center.y));
+			if (entity.t == "player") {
+				ctx.fillStyle="red";	
+			} else if (entity.t == "asteroid") {
+				ctx.fillStyle = "white";
+			} else {
+				ctx.fillStyle = "gray";
+			}
 				
-				ctx.fillRect(-1,-1,2,2);
-				ctx.restore();
 		};
 
 	exports.create = function () {

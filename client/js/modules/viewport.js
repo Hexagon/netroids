@@ -54,6 +54,8 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 
 					if(entity[0].t == "player")
 						ctx.strokeStyle="#FF4444";
+					else if(entity[0].t == "powerup")
+						ctx.strokeStyle="#AAAA77";
 					else
 						ctx.strokeStyle="#7777AA";	
 
@@ -84,7 +86,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 			ctx.beginPath();
 			ctx.save();
 			ctx.translate(Math.round(entity.p.x+center.x),Math.round(entity.p.y+center.y));
-			ctx.rotate(-Math.PI/2+entity.a.d);
+			ctx.rotate(-Math.PI/2+entity.r.d);
 
 			// Draw player
 			if(entity.t=="player") {
@@ -94,8 +96,8 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 				ctx.drawImage(textures.get("ship"),Math.round(-entity.m/1.5),Math.round(-entity.m),Math.round(entity.m*2/1.5),Math.round(entity.m*2));
 				ctx.restore();
 
+				// Draw flame
 				if(entity.a.m) {
-
 					ctx.save();
 					ctx.globalAlpha=0.8;
 					ctx.drawImage(textures.get("flame"),Math.round(-entity.m/3),Math.round(-entity.m-(entity.m*20*entity.a.m)*3),Math.round(entity.m*2/3),Math.round((entity.m*20*entity.a.m)*3));
@@ -104,11 +106,20 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 				}
 
 			// Ammo
-			} else if (entity.t == "ammo") {
-				fill = "red";
+			} else if (entity.t == "bullet") {
+				if(entity.public.damage > 10) {
+					fill = "blue";	
+				} else {
+					fill = "yellow";	
+				}
+				
 				ctx.rect(-entity.m/2,-entity.m/2,entity.m,entity.m);
 
 			// Fallback for other entities
+			} else if (entity.t == "powerup") {
+				fill = "blue";
+				ctx.rect(-entity.m/2,-entity.m/2,entity.m,entity.m);
+
 			} else {
 				fill = "gray";
 				ctx.drawImage(textures.get("asteroid1"),-entity.m,-entity.m,entity.m*2,entity.m*2);
@@ -133,7 +144,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 			ctx.restore();
 
 			// Stuff that appliy to everything except ammo
-			if (entity.t !== "ammo") {
+			if (entity.public.hp) {
 
 				// Draw hp
 				ctx.save();
@@ -149,11 +160,35 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 				ctx.strokeStyle="green";
 				ctx.beginPath();
 				ctx.moveTo(0,0);
-				ctx.lineTo((entity.m*2+10)*(entity.hp.current/entity.hp.max),0);
+				ctx.lineTo((entity.m*2+10)*(entity.public.hp.current/entity.public.hp.max),0);
 				ctx.lineWidth = 5;
 				ctx.stroke();
 
 				ctx.restore();
+
+				// Draw shield
+				if (entity.public.shield) {
+
+					ctx.save();
+
+					ctx.strokeStyle="#444444";
+					ctx.beginPath();
+					ctx.translate(entity.p.x+center.x-entity.m-5,entity.p.y+center.y-entity.m-14);
+					ctx.moveTo(0,0);
+					ctx.lineTo(entity.m*2+10,0);
+					ctx.lineWidth = 2;
+					ctx.stroke();
+
+					ctx.strokeStyle="#3344FF";
+					ctx.beginPath();
+					ctx.moveTo(0,0);
+					ctx.lineTo((entity.m*2+10)*(entity.public.shield.current/entity.public.shield.max),0);
+					ctx.lineWidth = 5;
+					ctx.stroke();
+
+					ctx.restore();
+
+				}
 
 			}
 
@@ -211,6 +246,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 	};
 
 	exports.redraw = function (advanceMs) {
+
 		if ((player = entities.getCurrentPlayer())) {
 
 			// Clear canvas
@@ -231,7 +267,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 				drawEntity(ents[id], center, context);
 
 				// While we're here, find the 10 closest non-ammo objects to player
-				if(ents[id].t !== "ammo") {
+				if(ents[id].t !== "bullet") {
 					currentDistance = vector.distance(ents[id].p,player.p);
 					closest.push([ents[id],currentDistance])
 				}
@@ -245,7 +281,9 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 			for(id in closest) {
 				drawPointer(closest[id], player, context);
 			}
+
 		}
+
 	}
 	return exports;
 

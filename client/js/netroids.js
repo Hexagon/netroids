@@ -32,7 +32,6 @@ define(['viewport', 'minimap', 'entities', 'network', 'textures', 'dom'], functi
 	// Load textures
 	dom.clearLoadStatus();
 	dom.addLoadStatus("Loading static assetts ...");
-
     textures.load([
 		["background","assets/gfx/space.jpg"],
 		["seamlessSpace","assets/gfx/seamless-space.png"],
@@ -44,7 +43,6 @@ define(['viewport', 'minimap', 'entities', 'network', 'textures', 'dom'], functi
 	], function () {
     	
     	// Textures ok, go on connecting
-    	console.log(window.location);
     	dom.addLoadStatus('Connecting to ' + window.location.host + ' ...');
 		network.connect();
 
@@ -57,12 +55,12 @@ define(['viewport', 'minimap', 'entities', 'network', 'textures', 'dom'], functi
 		// ... and starting main loop
 		dom.addLoadStatus('Done!');
 
-		// asd
+		// Show gamescreen after a delay of 500ms
 		setTimeout(function () {
 			dom.show("game");
 			main();	
 		}, 500);
-		
+
 	// Texture load progress update
     }, function (current, total) {
     	dom.addLoadStatus('Textures (' + current + '/' + total + ') ...');
@@ -71,8 +69,5 @@ define(['viewport', 'minimap', 'entities', 'network', 'textures', 'dom'], functi
     }, function (err) {
     	dom.addLoadStatus('Failed loading textures: ' + err,"error");
     });
-
-	// Main loop!
-	
 
 });

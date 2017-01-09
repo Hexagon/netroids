@@ -7,7 +7,16 @@ define(['util/castrato'], function(bus) {
 			players: 		document.getElementById('players'),
 			asteroids: 		document.getElementById('asteroids'),
 			latency: 		document.getElementById('latency'),
-			scoreboard: 	document.getElementById('scoreboard')
+			scoreboard: 	document.getElementById('scoreboard'),
+
+			/* Resources */
+			electricity: 	document.getElementById('resource-electricity'),
+			matter: 		document.getElementById('resource-matter'),
+
+			/* Powerups */
+			rapid: 			document.getElementById('powerup-rapid'),
+			spread: 		document.getElementById('powerup-spread'),
+			damage:  		document.getElementById('powerup-damage')
 		},
 
 		connection = function (status, rating) {
@@ -18,6 +27,25 @@ define(['util/castrato'], function(bus) {
 		entitiesChanged = function (status) {
 			elements.players.innerHTML = status.players;
 			elements.asteroids.innerHTML = status.asteroids;
+		},
+
+		playerChanged = function (player) {
+
+			elements.electricity.innerHTML = player.private.resources.electricity;
+			elements.matter.innerHTML = player.private.resources.matter;
+
+
+			for (id of ['rapid', 'spread', 'damage']) {
+				elements[id].className = elements[id].className.replace(' disabled','').replace(' enabled','').replace(' engaged', '');
+				if (player.private.powerups[id] && player.private.powerups[id].engaged) {
+					elements[id].className = elements[id].className + ' engaged';
+				} else if (player.private.powerups[id] && player.private.powerups[id].has) {
+					elements[id].className = elements[id].className + ' enabled';
+				} else {
+					elements[id].className = elements[id].className + ' disabled';
+				}
+			}
+			
 		},
 
 		latencyChanged = function (latency) {
@@ -44,5 +72,6 @@ define(['util/castrato'], function(bus) {
 	bus.on('network:error', 		function () { connection("error", "bad"); });
 	bus.on('network:latency', 		latencyChanged);
 	bus.on('network:scoreboard', 	scoreboardChanged);
+	bus.on('entities:playerdata', 		playerChanged);
 
 });

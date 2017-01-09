@@ -2,9 +2,15 @@ define(['util/castrato'], function (bus) {
 
 	var 
 		controlState = {
+
 			"fire": false,
 			"reverse": false,
 			"accelerate": false,
+
+			"rapid": false,
+			"spread": false,
+			"damage": false,
+
 			"rotation": {
 				"x": 0,
 				"y": 0
@@ -13,7 +19,7 @@ define(['util/castrato'], function (bus) {
 		debug = false,
 
 		// Which keys should trigger stuff
-		listenKeys = ["Space", "ControlLeft", "ShiftLeft"],
+		listenKeys = ["Space", "ControlLeft", "ShiftLeft", "Digit1", "Digit2", "Digit3"],
 		fireKeys = ["Space", "ControlLeft"],
 		reverseKeys = ["ShiftLeft"],
 
@@ -32,6 +38,9 @@ define(['util/castrato'], function (bus) {
 		if(listenKeys.indexOf(e.code) === -1) return;
 		if(fireKeys.indexOf(e.code) !== -1) setState("fire", true);
 		if(reverseKeys.indexOf(e.code) !== -1) setState("reverse", true);
+		if(e.code == "Digit1") setState("rapid", true);
+		if(e.code == "Digit2") setState("spread", true);
+		if(e.code == "Digit3") setState("damage", true);
 	});
 	
 	window.addEventListener('keyup', function (e) {
@@ -39,6 +48,9 @@ define(['util/castrato'], function (bus) {
 		if(listenKeys.indexOf(e.code) === -1) return;
 		if(fireKeys.indexOf(e.code) !== -1) setState("fire", false);
 		if(reverseKeys.indexOf(e.code) !== -1) setState("reverse", false);
+		if(e.code == "Digit1") setState("rapid", false);
+		if(e.code == "Digit2") setState("spread", false);
+		if(e.code == "Digit3") setState("damage", false);
 	});
 
 	/* Mouse events */

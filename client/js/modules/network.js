@@ -28,7 +28,8 @@ define(['io', 'util/castrato'], function (io, bus) {
 		socket.on('ping', (data) => {
 			if (data && data.t) {
 				socket.emit('ping-response', data);
-				bus.emit("network:latency", data.l)
+				bus.emit("network:latency", data.l);
+				latency = data.l;
 			}
 		});
 

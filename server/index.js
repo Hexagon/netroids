@@ -1,181 +1,169 @@
 "use strict";
 
 var 
-  restify = require('restify'),
-  server = restify.createServer(),
-  io = require('socket.io').listen(server.server),
-  path = require('path'),
-  entities = require('./entities.js'),
-  player = require('./player.js'),
+  server = require('./server.js'),
+  
+  entities = require('./entities'),
+  Player = require('./entities/player.js'),
+  Asteroid = require('./entities/asteroid.js'),
+  powerups = require('./powerups.js'),
 
-  scoreboard =  {},
-  playerIterator = 1,
-  last,
+  scoreboard = require('./scoreboard.js'),
 
-  sbUpdated = function () {
-    var sbs = [];
-    for (var entry in scoreboard)
-      sbs.push(scoreboard[entry]);
-    sbs.sort(function (a,b) { return b.score - a.score; });
-    io.emit('scoreboard', {s: sbs });
-  },
+  lastIteration,
 
   iterate = function () {
     var
-      passedHrTime = process.hrtime(last || process.hrtime()),
+      passedHrTime = process.hrtime(lastIteration || process.hrtime()),
       passed = passedHrTime[0] * 1000000 + passedHrTime[1] / 1000000;
 
-    last = process.hrtime();
+    lastIteration = process.hrtime();
 
     entities.advance(passed, function (entity) {
+
       // Entity added
-      io.emit('entities', entity);
+      server.io.emit('entities', entity);
+
     },function (uuid) {
 
-      io.emit('remove', uuid);
-      
       // Respawn?
       if(entities.get(uuid).t == "player") {
+
         // Respawn
         setTimeout(function () {
-          io.emit('entities', [player.create(uuid, entities)]);  
+          player.respawn();
+          server.io.emit('entities', [player]);
+          console.log('Respawn');
         },250);
-      }
         
-    },function (uuid) {
-      // Kill
-      if(scoreboard[uuid]) scoreboard[uuid].k++;
-      sbUpdated();
-    },function (uuid) {
-      // Death
-      if(scoreboard[uuid])scoreboard[uuid].d++;
-      sbUpdated();
-    },function (uuid, delta) {
-      // Score
-     if(scoreboard[uuid]) {
-        scoreboard[uuid].s+=delta;
-        sbUpdated();
+      } else {
+
+        server.io.emit('remove', uuid);
+        
       }
+
+    },function (uuid) {
+
+      scoreboard.kill(uuid);
+
+    },function (uuid) {
+
+      scoreboard.death(uuid);
+
+    },function (uuid, delta) {
+
+      scoreboard.score(uuid, delta);
+
     });
 
-    setTimeout(function () { iterate(); }, 25);
+    setTimeout(iterate, 25);
+
   };
 
 // Communicate
-io.sockets.on('connection', function (socket) {
-  
-  var timeout,
-      playerUUID;
-
-  socket.pings = 0;
-  socket.latency = 0;
+server.io.sockets.on('connection', function (socket) {
 
   // Create player
-  playerUUID = player.create(undefined, entities).uuid;
-  
-  socket.emit('player', playerUUID);
+  var player = new Player();
 
-  scoreboard[playerUUID] = {
-    n: "Player " + (playerIterator++),
-    uuid: playerUUID,
-    s: 0,
-    k: 0,
-    d: 0,
-    l: 0
-  };
+  // Emit player, could this be handled by inventory?
+  socket.emit('player', player.uuid);
 
-  sbUpdated();
+  // Add player to entity inventory
+  entities.add(player);
 
-  // Send all entities
+  // Add player to scorebard
+  scoreboard.add(player);
+
+  // Send all entities to the new player
   var tmp = entities.all();
   socket.emit('entities', entities.all());
+
+  // Get update of mouse
+  socket.on('controls', function (data) {
+    if(data && player) {
+      player.local.controls = data;
+    }
+  });
+
+  // Handle ping response (request is sent by server.js)
+  socket.on('ping-response', function (pingTime) {
+    if(pingTime && pingTime.t) {
+      socket.latency = Math.round(((new Date().getTime() - pingTime.t) + socket.latency) / ((socket.pings++) == 0 ? 1 : 2));
+      scoreboard.latency(player.uuid, socket.latency);
+    }
+  });
 
   // Handle disconnect
   socket.on('disconnect', function () {
 
      // Remove from socket list
-     delete scoreboard[playerUUID];
-     sbUpdated();
+     scoreboard.remove(player.uuid);
 
      // Other stuff (this is bridge)
-     entities.remove(playerUUID);
-     io.emit('remove', playerUUID);
+     entities.remove(player);
+     server.io.emit('remove', player.uuid);
 
   });
-
-  // Get update of mouse
-  socket.on('controls', function (data) {
-    let player = entities.get(playerUUID);
-    if(data && player) {
-      // Onödigt att lägga detta på spelaren?
-      player.controls = data;
-    }
-  });
-
-  // Handle ping
-  socket.on('ping-response', function (pingTime) {
-    if(pingTime && pingTime.t) {
-      socket.latency = Math.round(((new Date().getTime() - pingTime.t) + socket.latency) / ((socket.pings++) == 0 ? 1 : 2));
-      scoreboard[playerUUID].l = socket.latency;
-    }
-  });
-
-  // Intervalled ping
-  setInterval(function () {
-    socket.emit('ping', {t: new Date().getTime(), l: socket.latency, st: new Date().getTime()});
-  }, 2000);
-  // Initial ping
-  socket.emit('ping', {t: new Date().getTime(), l: socket.latency});
 
 });
 
-  // Full update of scoreboard each fifth second
-  setInterval(function () {
-    sbUpdated();
-  },5000);
+// Create random debris if needed, each third second
+setInterval(function () {
+  if(Object.keys(entities.all()).length < 50) {
 
-  // Create random debris if needed, each third second
-  setInterval(function () {
-    if(Object.keys(entities.all()).length < 50) {
-      var maxHp = Math.round(Math.random()*75+25),
-          mass = Math.round(maxHp/1.5);
-      io.emit('entities',[ 
-        entities.create({ 
-          "i": "Asteroid",
-          "p": {
-            "x": Math.random()*30000-15000,
-            "y": Math.random()*30000-15000
-          },
-          "v": {
-            "x": Math.random()*0.0005-0.001,
-            "y": Math.random()*0.0005-0.001
-          },
-          "a": {
-            "d": 0.0,
-            "m": 0.0
-          },
-          "hp": {
-            "current": maxHp,
-            "max": maxHp
-          },
-          "r": 0.0,
-          "m": mass,
-          "t": "asteroid"
-        })]
-      );
-    }
-  },1000);
+    var maxHp = Math.round(Math.random()*75+25),
+        mass = Math.round(maxHp/1.5),
+        newAsteroid = new Asteroid();
 
-// Serve static files
-server.get(/\/?.*/, restify.serveStatic({
-    directory: path.join(process.cwd(), 'client'),
-    default: 'index.html'
-}));
+    newAsteroid.position.set(Math.random()*30000-15000,Math.random()*30000-15000);
+    newAsteroid.velocity.set(Math.random()*0.0005-0.001,Math.random()*0.0005-0.001);
 
-// Start webserver
-server.listen(process.env.PORT || 6660, function() {
-  console.log('%s listening at %s', server.name, server.url);
-});
+    entities.add(newAsteroid);
+
+    server.io.emit('entities',[ 
+        newAsteroid
+    ]);
+
+  }
+},1000);
 
 // Start iteration
 iterate();
+
+// Create random powerups
+/*setInterval(function () {
+  // If we got less than 70 entities on gamefield
+  if(Object.keys(entities.all()).length < 70) {
+    powerups.request(1.0, function (powerup) {
+      if(powerup) {
+        server.io.emit('entities',[ 
+          entities.create({ 
+            "i": "Powerup",
+            "p": {
+              "x": Math.random()*30000-15000,
+              "y": Math.random()*30000-15000
+            },
+            "v": {
+              "x": Math.random()*0.0005-0.001,
+              "y": Math.random()*0.0005-0.001
+            },
+            "a": {
+              "d": 0.0,
+              "m": 0.0
+            },
+            "hp": {
+              "current": 1,
+              "max": 1
+            },
+            "r": 0.0,
+            "m": 10,
+            "t": powerup.type,
+            "ts": powerup.subtype,
+            "tc": powerup.class
+          })]
+        );
+      }
+    });
+  }
+},1000);*/
