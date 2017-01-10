@@ -82,6 +82,11 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 					entity.p.y += entity.v.y * advanceMs;
 				
 				}
+
+				// Currently only used for animating stuff
+				if(entity.ttl) {
+					entity.ttl -= advanceMs;
+				}
 				
 
 			}

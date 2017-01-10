@@ -1,5 +1,8 @@
 var Entity = require('./entity.js'),
-	Vector = require('../util/vector.js');
+	Vector = require('../util/vector.js'),
+	Explosion = require('./explosion.js'),
+
+    inventory = require('./');
 
 class Bullet extends Entity {
 	constructor (source) {
@@ -52,11 +55,27 @@ class Bullet extends Entity {
 		if (that.type == "asteroid" ) 	this.local.score = 5;		
 		if (that.type == "player" ) 	this.local.score = 10;		
 
-		// If target died, set kill score
-		//if (that.type == "asteroid" && that.public.hp <= 0 ) 	this.local.score += 50;				
+		// If target is player, and died, set kill score and spawn explosion		
 		if (that.type == "player" && that.public.hp.current <= 0 ) {
+
 			this.local.score += 100;
 			that.local.killer = owner;
+
+			// Spawn explosion at end of event queue
+			let explosion = new Explosion(that);
+			inventory.add(explosion);	
+
+		}
+
+		// If target is asteroid and died, spawn explosion
+		if (that.type == "asteroid" && that.public.hp.current <= 0 ) {
+		  
+			// Spawn explosion at end of event queue
+			setImmediate(function () {
+				let explosion = new Explosion(that);
+				inventory.add(explosion);	
+			});
+
 		}
 
 		// This bullet is dead

@@ -1,6 +1,7 @@
 var Entity = require('./entity.js'),
     Vector = require('../util/vector.js'),
     Bullet = require('./bullet.js'),
+    Explosion = require('./explosion.js'),
 
     inventory = require('./');
 
@@ -32,7 +33,7 @@ class Player extends Entity {
 
   	this.position.set(Math.random()*30000-15000, Math.random()*30000-15000);
     this.velocity = new Vector();
-    
+
   	this.public = Object.assign(this.public, {
   		"hp": {
   			"current": 100,
@@ -160,8 +161,14 @@ class Player extends Entity {
   collidedWith (that) {
 
     if ( that.type == "asteroid" ) {
+
       that.public.hp.current -= this.public.hp.max;
       this.public.hp.current -= that.public.hp.max;
+
+      // Spawn explosion
+      inventory.add(new Explosion(this));
+      inventory.add(new Explosion(that)); 
+
     } else if ( that.type == "powerup" ) {
       
       if(!this.private.powerups[that.public.dropped.subtype]) {

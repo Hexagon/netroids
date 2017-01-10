@@ -1,5 +1,11 @@
 # netroids
 
+Demo
+========
+
+Current version always available at http://netroids.56k.guru
+
+
 Docker setup
 ========
 

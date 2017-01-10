@@ -39,7 +39,9 @@ define(['viewport', 'backdrop', 'backscroll', 'minimap', 'entities', 'network', 
 		["seamlessSpace","assets/gfx/seamless-space.png"],
 		["asteroid1","assets/gfx/asteroid.png"],
 		["ship","assets/gfx/spaceship.png"],
-		["flame","assets/gfx/jet-flame.png"]
+		["flame","assets/gfx/jet-flame.png"],
+		["explosion","assets/gfx/explosion.png"],
+		["ringicons","assets/gfx/qubodup_ringicons.png"]
 
 	// Textures successfully loaded
 	], function () {

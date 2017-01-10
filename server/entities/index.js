@@ -82,13 +82,13 @@ var
 					// Was this death a player?
 					if (entity.type == "player") {
 
-						// Notify that a death has occurred, but NEVER remove players untin disconnect
-						deathCallback(entity);
-
 						// Was this a kill?
 						if (entity.local.killer) {
 							killCallback(entity.local.killer);
 						}
+
+						// Notify that a death has occurred, but NEVER remove players untin disconnect
+						deathCallback(entity);
 
 					} else {
 

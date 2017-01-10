@@ -8,8 +8,8 @@ class PowerUp extends Entity {
 		super();
 
 		this.type = "powerup";
-		this.mass = 5;
-		this.ttl = 45000;
+		this.mass = 15;
+		this.ttl = 60000;
 
 		// Inherit position and velocity from source
         this.position.from(source.position);

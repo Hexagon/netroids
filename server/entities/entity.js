@@ -64,7 +64,7 @@ class Entity {
 		return (this.ttl !== undefined && this.ttl <= 0);
 		
 	}
-
+	
 	advance (advanceMs) {
 
 		if (this.ttl !== undefined) this.ttl -= advanceMs;
