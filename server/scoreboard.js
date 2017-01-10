@@ -49,6 +49,8 @@ module.exports = {
 
         scoreboard[uuid].k++;
 
+		console.log('Kill', uuid);
+
         updated();	
 	},
 	death: function (uuid) {
@@ -62,7 +64,6 @@ module.exports = {
 		if (!scoreboard[uuid]) return;
 
 		scoreboard[uuid].s += delta;
-
 		updated();
 	},
 	latency: function (uuid, latency) {

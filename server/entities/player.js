@@ -31,7 +31,8 @@ class Player extends Entity {
   init () {
 
   	this.position.set(Math.random()*30000-15000, Math.random()*30000-15000);
-
+    this.velocity = new Vector();
+    
   	this.public = Object.assign(this.public, {
   		"hp": {
   			"current": 100,
@@ -49,7 +50,8 @@ class Player extends Entity {
   	});
 
     this.local = Object.assign(this.local, {
-      "controls": {}
+      "controls": {},
+      "killer": undefined
     });
 
   }
@@ -87,42 +89,47 @@ class Player extends Entity {
       if ( this.local.controls.fire && (new Date() - (this.lastFire || 0)) > rateLimiter ) {
         this.lastFire = new Date();
 
-        var damage = 5,
-          bullet;
-        
-        // Increase damage on powerup
-        if (this.private.powerups["damage"] && this.private.powerups["damage"].engaged) {
-          damage *= 5;
-        }
+        // Spawn new bullets at end of event loop
+        let self = this;
+        setImmediate(function () {
+          var damage = 5,
+            bullet;
+          
+          // Increase damage on powerup
+          if (self.private.powerups["damage"] && self.private.powerups["damage"].engaged) {
+            damage *= 5;
+          }
 
-        // Prepare bullet 1
-        bullet = new Bullet(this);
-        bullet.public.damage = damage;
-        inventory.add(bullet);
-
-        // More bullets on powerup
-        if (this.private.powerups["spread"] && this.private.powerups["spread"].engaged) {
-        
-          // Left
-          bullet = new Bullet(this);
-          bullet.velocity.rotate(-5);
+          // Prepare bullet 1
+          bullet = new Bullet(self);
           bullet.public.damage = damage;
           inventory.add(bullet);
 
-          // Right
-          bullet = new Bullet(this);
-          bullet.velocity.rotate(5);
-          bullet.public.damage = damage;
-          inventory.add(bullet);
+          // More bullets on powerup
+          if (self.private.powerups["spread"] && self.private.powerups["spread"].engaged) {
+          
+            // Left
+            bullet = new Bullet(self);
+            bullet.velocity.rotate(-5);
+            bullet.public.damage = damage;
+            inventory.add(bullet);
 
-        }
+            // Right
+            bullet = new Bullet(self);
+            bullet.velocity.rotate(5);
+            bullet.public.damage = damage;
+            inventory.add(bullet);
+
+          }
+        });
 
       }
 
       // Engage powerups
-      let powerup, id;
+      let id;
       for(id of ["damage", "spread", "rapid"]) {
         if(this.local.controls[id]) {
+          let powerup;
           powerup = this.private.powerups[id];
           if ( powerup && powerup.has && !powerup.engaged) {
 
@@ -132,7 +139,7 @@ class Player extends Entity {
 
             // Disengage powerup after 2 minutes
             setTimeout(function () {
-              powerup.engaged = false;
+              if(powerup) powerup.engaged = false;
             },120000);
 
           }  

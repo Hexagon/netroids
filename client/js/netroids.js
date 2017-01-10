@@ -5,7 +5,7 @@ require.config({
 	}
 });
 
-define(['viewport', 'minimap', 'entities', 'network', 'textures', 'dom'], function(viewport, minimap, entities, network, textures, dom) {
+define(['viewport', 'backdrop', 'backscroll', 'minimap', 'entities', 'network', 'textures', 'dom'], function(viewport, backdrop, backscroll, minimap, entities, network, textures, dom) {
 
 	var
 		lastRedraw,
@@ -19,6 +19,8 @@ define(['viewport', 'minimap', 'entities', 'network', 'textures', 'dom'], functi
 			lastRedraw = now;
 
 		entities.advance(passed);
+		
+		backscroll.scroll(passed);
 
 		viewport.redraw();
 		minimap.redraw();
@@ -47,8 +49,17 @@ define(['viewport', 'minimap', 'entities', 'network', 'textures', 'dom'], functi
 		network.connect();
 
 		// ... and creating viewports
+		dom.addLoadStatus('Creating backdrop ...');
+		backdrop.create();
+		backdrop.redraw();
+
+		dom.addLoadStatus('Creating backscroll ...');
+		backscroll.create();
+		backscroll.redraw();
+
 		dom.addLoadStatus('Creating viewport ...');
 		viewport.create();
+
 		dom.addLoadStatus('Creating minimap ...');
 		minimap.create();
 

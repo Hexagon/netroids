@@ -16,6 +16,7 @@ define(['util/castrato'], function (bus) {
 				"y": 0
 			}
 		},
+		lastMouseMove = new Date().getTime(),
 		debug = false,
 
 		// Which keys should trigger stuff
@@ -72,10 +73,14 @@ define(['util/castrato'], function (bus) {
 	});
 
 	window.addEventListener('mousemove', function (e) {
-		bus.emit("pointer:position", {
-			x: e.clientX,
-			y: e.clientY
-		});
+		let ts = new Date().getTime();
+		if (ts - lastMouseMove > 15 ) {
+			bus.emit("pointer:position", {
+				x: e.clientX,
+				y: e.clientY
+			});
+			lastMouseMove = ts;
+		}
 	});
 
 	window.addEventListener('touchstart', function (e) {
@@ -87,12 +92,10 @@ define(['util/castrato'], function (bus) {
 			setState("fire", true);
 			setState("accelerate", false);
 		}
-		
 	});
 	
 	window.addEventListener('touchend', function (e) {
 		e.preventDefault();
-		console.log(e.touches);
 		if(e.touches.length == 0) {
 			setState("accelerate", false);
 		} else if(e.touches.length == 1) {
@@ -103,10 +106,14 @@ define(['util/castrato'], function (bus) {
 
 	window.addEventListener('touchmove', function (e) {
 		e.preventDefault();
-		bus.emit("pointer:position", {
-			x: e.touches[0].clientX,
-			y: e.touches[0].clientY
-		});
+		let ts = new Date().getTime();
+		if (ts - lastMouseMove > 100 ) { 
+			bus.emit("pointer:position", {
+				x: e.touches[0].clientX,
+				y: e.touches[0].clientY
+			});
+			lastMouseMove = ts;
+		}
 	});
 
 	bus.on("pointer:vector", function (v) {

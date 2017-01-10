@@ -24,6 +24,10 @@ class Bullet extends Entity {
 			"damage": 5
 		});
 
+		this.local = Object.assign(this.local, {
+			"score": 0 /* The bulled produced this score */
+		});
+
 	};
 
 	collidedWith (that) {
@@ -42,6 +46,17 @@ class Bullet extends Entity {
 			}
 		} else {
 			that.public.hp.current -= this.public.damage;
+		}
+
+		// Set hit score
+		if (that.type == "asteroid" ) 	this.local.score = 5;		
+		if (that.type == "player" ) 	this.local.score = 10;		
+
+		// If target died, set kill score
+		//if (that.type == "asteroid" && that.public.hp <= 0 ) 	this.local.score += 50;				
+		if (that.type == "player" && that.public.hp.current <= 0 ) {
+			this.local.score += 100;
+			that.local.killer = owner;
 		}
 
 		// This bullet is dead

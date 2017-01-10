@@ -14,6 +14,8 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector'], function(bus,
 			y: 500
 		},
 
+		minimapScaleFactor = 100,
+
 		screenCenter = {
 			x: dimensions.width/2,
 			y: dimensions.height/2
@@ -23,7 +25,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector'], function(bus,
 			if(entity.t === "bullet") return;
 			
 			ctx.save();
-			ctx.translate(Math.round(entity.p.x/200+center.x),Math.round(entity.p.y/200+center.y));
+			ctx.translate(Math.round(entity.p.x/100+center.x),Math.round(entity.p.y/100+center.y));
 			if (entity.t == "player") {
 				ctx.fillStyle="red";	
 			} else if (entity.t == "asteroid") {
@@ -31,6 +33,9 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector'], function(bus,
 			} else {
 				ctx.fillStyle = "gray";
 			}
+
+			ctx.fillRect(-1,-1,2,2);
+ 			ctx.restore();
 				
 		};
 
@@ -57,7 +62,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector'], function(bus,
 
 			// Find center of screen
 			center = vector.sub(screenCenter, vector.div(player.p,200));
-			
+
 			// Draw entities
 			context.strokeStyle="gray";
 			var ents = entities.all(),
@@ -66,7 +71,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector'], function(bus,
 			for(id in ents) {
 				drawEntity(ents[id], context);
 			}
-			
+
 		}
 	};
 

@@ -6,12 +6,6 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 
 		dimensions,
 
-		debug = {
-			velocity: false,
-			acceleration: false,
-			rotation: false
-		},
-
 		center = {
 			x: 500,
 			y: 500
@@ -79,13 +73,16 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 
 		drawEntity = function (entity, center, ctx) {
 
+			// Ignore if entity is out of bounds
+			if (!(entity.p.x+center.x>-100 && entity.p.x+center.x < dimensions.width + 100 && entity.p.y+center.y > -100 && entity.p.y+center.y < dimensions.height + 100)) return;
+
 			var stroke,
 				fill;
 
 			// Common
 			ctx.beginPath();
 			ctx.save();
-			ctx.translate(Math.round(entity.p.x+center.x),Math.round(entity.p.y+center.y));
+			ctx.translate(entity.p.x+center.x,entity.p.y+center.y);
 			ctx.rotate(-Math.PI/2+entity.r.d);
 
 			// Draw player
@@ -93,14 +90,14 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 
 				ctx.save();
 				ctx.rotate(180*Math.PI/180);
-				ctx.drawImage(textures.get("ship"),Math.round(-entity.m/1.5),Math.round(-entity.m),Math.round(entity.m*2/1.5),Math.round(entity.m*2));
+				ctx.drawImage(textures.get("ship"),-entity.m/1.5,-entity.m,entity.m*2/1.5,entity.m*2);
 				ctx.restore();
 
 				// Draw flame
 				if(entity.a.m) {
 					ctx.save();
 					ctx.globalAlpha=0.8;
-					ctx.drawImage(textures.get("flame"),Math.round(-entity.m/3),Math.round(-entity.m-(entity.m*20*entity.a.m)*3),Math.round(entity.m*2/3),Math.round((entity.m*20*entity.a.m)*3));
+					ctx.drawImage(textures.get("flame"),-entity.m/3,-entity.m-(entity.m*20*entity.a.m)*3,entity.m*2/3,(entity.m*20*entity.a.m)*3);
 					ctx.restore();
 
 				}
@@ -192,23 +189,8 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 
 			}
 
-		},
-
-		drawBackground = function (ctx, dimensions) {
-
-			ctx.save();
-			ctx.globalAlpha = 0.2;
-			ctx.drawImage(textures.get("background"),0,0);
-
-			ctx.rect(0,0,dimensions.width,dimensions.height);
-			ctx.fillStyle=patterns.seamlessSpace;
-			ctx.translate(Math.round(-player.p.x/2), Math.round(-player.p.y/2));
-			ctx.globalCompositeOperation = "lighter";
-			ctx.fill();
-			ctx.restore();
-
 		};
-
+		
 	exports.create = function () {
 
 		// Create new canvas
@@ -226,7 +208,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 		});
 
 		// Place canvas in DOM
-		if(!canvas.place("#game", "c")) {
+		if(!canvas.place("#game", "viewport")) {
 			console.error("Could not create canvas, bailing out.");
 			return;
 		}
@@ -250,9 +232,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 		if ((player = entities.getCurrentPlayer())) {
 
 			// Clear canvas
-			context.fillStyle = "black";
-			context.fillRect(0, 0, dimensions.width, dimensions.height);
-			drawBackground(context, dimensions);
+			context.clearRect(0, 0, dimensions.width, dimensions.height);
 
 			// Find center of screen
 			center = vector.sub(screenCenter, player.p);
@@ -263,7 +243,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 			var ents = entities.all(),
 				closest = [],
 				currentDistance;
-			for(id in ents) {
+			for(var id in ents) {
 				drawEntity(ents[id], center, context);
 
 				// While we're here, find the 10 closest non-ammo objects to player

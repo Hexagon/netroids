@@ -1,6 +1,7 @@
 var Entity = require('./entity.js');
 
 class Asteroid extends Entity {
+	
 	constructor () {
 
 		super();
@@ -14,7 +15,6 @@ class Asteroid extends Entity {
 	  			"max": 100
 	  		}
 	  	});
-
 
 	};
 

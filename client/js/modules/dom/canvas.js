@@ -8,13 +8,16 @@ define(function() {
 			canvas,
 			context,
 
+			widthOffset,
+			heightOffset,
+
 			emit = function (event, a1, a2, a3) {
 				listeners[event] && listeners[event](a1, a2, a3);
 			},
 
 			autoResize = function (e) {
-				canvas.width = window.innerWidth - 300;
-				canvas.height = window.innerHeight;
+				canvas.width = window.innerWidth - 300 + (widthOffset || 0);
+				canvas.height = window.innerHeight + (heightOffset || 0);
 				emit('resize', {
 					width: canvas.width,
 					height: canvas.height
@@ -40,7 +43,7 @@ define(function() {
 			return context;
 		};
 
-		exports.place = function (destinationSelector, id, width, height) {
+		exports.place = function (destinationSelector, id, width, height, _widthOffset, _heightOffset) {
 
 			var destination;
 
@@ -66,14 +69,18 @@ define(function() {
 			// Get a 2d context
 			context = canvas.getContext("2d");
 
+			// 
+			widthOffset = _widthOffset;
+			heightOffset = _heightOffset;
+
 			// Listen for resize events
 			if(!width && !height) {
 				window.addEventListener("resize", autoResize);	
 				// Call resize one initial time
 				autoResize();
 			} else {
-				canvas.width = width;
-				canvas.height = height;
+				canvas.width = width + (widthOffset || 0);
+				canvas.height = height + (heightOffset || 0);
 			}
 
 			// All good!

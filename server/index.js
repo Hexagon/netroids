@@ -6,50 +6,34 @@ var
   entities = require('./entities'),
   Player = require('./entities/player.js'),
   Asteroid = require('./entities/asteroid.js'),
-  powerups = require('./powerups.js'),
 
   scoreboard = require('./scoreboard.js'),
 
-  lastIteration,
-
   iterate = function () {
-    var
-      passedHrTime = process.hrtime(lastIteration || process.hrtime()),
-      passed = passedHrTime[0] * 1000000 + passedHrTime[1] / 1000000;
 
-    lastIteration = process.hrtime();
-
-    entities.advance(passed, function (entity) {
+    entities.advance(function (entity) {
 
       // Entity added
       server.io.emit('entities', entity);
 
     },function (uuid) {
-
-      // Respawn?
-      if(entities.get(uuid).t == "player") {
-
-        // Respawn
-        setTimeout(function () {
-          player.respawn();
-          server.io.emit('entities', [player]);
-          console.log('Respawn');
-        },250);
+      
+      server.io.emit('remove', uuid);
         
-      } else {
-
-        server.io.emit('remove', uuid);
-        
-      }
 
     },function (uuid) {
 
       scoreboard.kill(uuid);
 
-    },function (uuid) {
+    },function (player) {
 
-      scoreboard.death(uuid);
+      scoreboard.death(player.uuid);
 
+      // Respawn player
+      player.respawn();
+      server.io.emit('entities', [player]);
+      console.log('Respawned');
+      
     },function (uuid, delta) {
 
       scoreboard.score(uuid, delta);

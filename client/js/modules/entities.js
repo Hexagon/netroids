@@ -15,8 +15,8 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 			entities[freshEntity.u] = freshEntity;
 			
 			if (oldEntity) {
-				entities[freshEntity.u].p.x = (entities[freshEntity.u].p.x + oldEntity.p.x * 3) / 4;
-				entities[freshEntity.u].p.y = (entities[freshEntity.u].p.y + oldEntity.p.y * 3) / 4;
+				entities[freshEntity.u].p.x = (entities[freshEntity.u].p.x * 2 + oldEntity.p.x) / 3;
+				entities[freshEntity.u].p.y = (entities[freshEntity.u].p.y * 2 + oldEntity.p.y) / 3;
 			}
 
 			if (freshEntity.u == playerUUID) {
@@ -24,6 +24,7 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 			}
 
 			freshEntity.latency = latency;
+			freshEntity.received = new Date().getTime();
 
 			return entities[freshEntity.u];
 		},
@@ -67,10 +68,21 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 				let entity = entities[entityIdx];
 
 				// Apply velocity to position
-				entity.p.x += entity.v.x * (advanceMs + entity.latency / 2);
-				entity.p.y += entity.v.y * (advanceMs + entity.latency / 2);
+				if (entity.latency) {
+				
+					let recvDelta = recDelta = new Date().getTime() - entity.received;
 
-				entity.latency = 0;
+					entity.p.x += entity.v.x * (recvDelta + entity.latency / 2);
+					entity.p.y += entity.v.y * (recvDelta + entity.latency / 2);
+					
+					entity.latency = 0;
+
+				} else {
+					entity.p.x += entity.v.x * advanceMs;
+					entity.p.y += entity.v.y * advanceMs;
+				
+				}
+				
 
 			}
 

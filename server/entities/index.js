@@ -1,6 +1,7 @@
 "use strict";
 
-const PowerUp = require('./powerup.js');
+const PowerUp = require('./powerup.js'),
+	  hrtimer = require('../util/hrtimer.js');
 
 var 	
 	all = {},
@@ -13,30 +14,28 @@ var
 	},
 
 	remove = function (entity) {
+		
+		// Check if this death dropped something
+		if( entity.type == "asteroid" ) {
+			let powerup = new PowerUp(entity);
+			if(powerup.public.dropped) {
+				add(powerup);
+			}
+		}
+
 		// Delete entity
 		delete all[entity.uuid];
 		delete byType[entity.type][entity.uuid];
 	},
 
-	advance = function (advanceMs, updatedCallback, removedCallback, killCallback, deathCallback, scoreCallback) {
+	advance = function (updatedCallback, removedCallback, killCallback, deathCallback, scoreCallback) {
 
 		var entity,
 			entityIdx,
 			innerEntity,
 			innerEntityIdx,
 			updated=[],
-			preRemove = function (entity) {
-
-				// Check if this death dropped something
-				if( entity.type == "asteroid" ) {
-					let powerup = new PowerUp(entity);
-					if(powerup.public.dropped) {
-						add(powerup);
-						updatedCallback([powerup]);
-					}
-				}
-
-			};
+			advanceMs = hrtimer.lap('entityAdvance');
 
 		// Loop through all entities
 		for(entityIdx in all) {	entity = all[entityIdx];
@@ -74,9 +73,30 @@ var
 
 				// Is the entity dead?
 				if ((entity.public.hp && entity.public.hp.current <= 0) || entity.pendingRemoval) {
-					preRemove(entity);
-					removedCallback(entity.uuid);
-					remove(entity);
+
+					// Did this generate score?
+					if (entity.local.score) {
+						scoreCallback(entity.public.owner, entity.local.score);
+					}
+
+					// Was this death a player?
+					if (entity.type == "player") {
+
+						// Notify that a death has occurred, but NEVER remove players untin disconnect
+						deathCallback(entity);
+
+						// Was this a kill?
+						if (entity.local.killer) {
+							killCallback(entity.local.killer);
+						}
+
+					} else {
+
+						// Do the removal, after notifying callee
+						removedCallback(entity.uuid);
+						remove(entity);
+
+					}
 
 				// ... nope, just updated. Notify the client
 				} else {
@@ -85,6 +105,8 @@ var
 				
 				entity.local.updated = false;
 			}
+
+			//updated.push(entity);
 		}
 
 		// Notify listeners that stuff has changed!
