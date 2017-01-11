@@ -31,15 +31,15 @@ define(['util/castrato'], function(bus) {
 
 		playerChanged = function (player) {
 
-			elements.electricity.innerHTML = player.private.resources.electricity;
-			elements.matter.innerHTML = player.private.resources.matter;
+			elements.electricity.innerHTML = player.pr.resources.electricity;
+			elements.matter.innerHTML = player.pr.resources.matter;
 
 
 			for (id of ['rapid', 'spread', 'damage']) {
 				elements[id].className = elements[id].className.replace(' disabled','').replace(' enabled','').replace(' engaged', '');
-				if (player.private.powerups[id] && player.private.powerups[id].engaged) {
+				if (player.pr.powerups[id] && player.pr.powerups[id].engaged) {
 					elements[id].className = elements[id].className + ' engaged';
-				} else if (player.private.powerups[id] && player.private.powerups[id].has) {
+				} else if (player.pr.powerups[id] && player.pr.powerups[id].has) {
 					elements[id].className = elements[id].className + ' enabled';
 				} else {
 					elements[id].className = elements[id].className + ' disabled';

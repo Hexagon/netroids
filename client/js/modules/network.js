@@ -17,6 +17,7 @@ define(['io', 'util/castrato'], function (io, bus) {
 		socket.on('error', 			(e) 	=> bus.emit('network:error', e)			);
 		socket.on('entities', 		(data) 	=> bus.emit('network:entities', data)	);
 		socket.on('remove', 		(data) 	=> bus.emit('network:remove', data)		);
+		socket.on('player', 		(uuid) 	=> playerUUID = uuid 					);
 		socket.on('player', 		(uuid)  => bus.emit('network:player', uuid)		);
 		socket.on('scoreboard', 	(data) 	=> {
 			bus.emit("network:scoreboard", {
@@ -24,7 +25,6 @@ define(['io', 'util/castrato'], function (io, bus) {
 				playerUUID: playerUUID
 			});
 		});
-		socket.on('player', 		(uuid) => playerUUID = uuid 					);
 		socket.on('ping', (data) => {
 			if (data && data.t) {
 				socket.emit('ping-response', data);

@@ -104,7 +104,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 
 			// Ammo
 			} else if (entity.t == "bullet") {
-				if(entity.public.damage > 10) {
+				if(entity.pu.damage > 10) {
 					fill = "orange";	
 				} else {
 					fill = "yellow";	
@@ -114,19 +114,19 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 
 			// Explosion
 			} else if(entity.t=="explosion") {
-				let spriteIdx = Math.round((entity.public.ttlmax-entity.ttl)/(entity.public.ttlmax/10));
+				let spriteIdx = Math.round((entity.pu.ttlmax-entity.ttl)/(entity.pu.ttlmax/10));
 				ctx.drawImage(textures.get("explosion"),spriteIdx*128,0,128,128,-entity.m*4,-entity.m*4,entity.m*8,entity.m*8);
 				//ctx.drawImage(textures.get("ship"),-entity.m/1.5,-entity.m,entity.m*2/1.5,entity.m*2);
 
 			// Fallback for other entities
 			} else if (entity.t == "powerup") {
 
-				if(entity.public.dropped) {
-					if (entity.public.dropped.subtype == "rapid") {
+				if(entity.pu.dropped) {
+					if (entity.pu.dropped.subtype == "rapid") {
 						ctx.drawImage(textures.get("ringicons"),256,0,128,128,-entity.m*2,-entity.m*2,entity.m*4,entity.m*4);		
-					} else if (entity.public.dropped.subtype == "spread") {
+					} else if (entity.pu.dropped.subtype == "spread") {
 						ctx.drawImage(textures.get("ringicons"),128,128,128,128,-entity.m*2,-entity.m*2,entity.m*4,entity.m*4);		
-					} else if (entity.public.dropped.subtype == "damage") {
+					} else if (entity.pu.dropped.subtype == "damage") {
 						ctx.drawImage(textures.get("ringicons"),128,0,128,128,-entity.m*2,-entity.m*2,entity.m*4,entity.m*4);		
 					}
 				}
@@ -156,7 +156,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 			ctx.restore();
 
 			// Stuff that appliy to everything except ammo
-			if (entity.public.hp) {
+			if (entity.pu.hp) {
 
 				// Draw hp
 				ctx.save();
@@ -172,14 +172,14 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 				ctx.strokeStyle="green";
 				ctx.beginPath();
 				ctx.moveTo(0,0);
-				ctx.lineTo((entity.m*2+10)*(entity.public.hp.current/entity.public.hp.max),0);
+				ctx.lineTo((entity.m*2+10)*(entity.pu.hp.current/entity.pu.hp.max),0);
 				ctx.lineWidth = 5;
 				ctx.stroke();
 
 				ctx.restore();
 
 				// Draw shield
-				if (entity.public.shield) {
+				if (entity.pu.shield) {
 
 					ctx.save();
 
@@ -194,7 +194,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 					ctx.strokeStyle="#3344FF";
 					ctx.beginPath();
 					ctx.moveTo(0,0);
-					ctx.lineTo((entity.m*2+10)*(entity.public.shield.current/entity.public.shield.max),0);
+					ctx.lineTo((entity.m*2+10)*(entity.pu.shield.current/entity.pu.shield.max),0);
 					ctx.lineWidth = 5;
 					ctx.stroke();
 

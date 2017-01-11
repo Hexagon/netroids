@@ -6,7 +6,7 @@ const PowerUp = require('./powerup.js'),
 var 	
 	all = {},
 	byType = {},
-
+	
 	add = function (entity) {
 		all[entity.uuid] = entity;
 		if(!byType[entity.type]) byType[entity.type] = {};

@@ -2,7 +2,7 @@ var Entity = require('./entity.js'),
 	Vector = require('../util/vector.js'),
 	Explosion = require('./explosion.js'),
 
-    inventory = require('./');
+	inventory = require('./');
 
 class Bullet extends Entity {
 	constructor (source) {
@@ -71,6 +71,7 @@ class Bullet extends Entity {
 		if (that.type == "asteroid" && that.public.hp.current <= 0 ) {
 		  
 			// Spawn explosion at end of event queue
+			var self = this;
 			setImmediate(function () {
 				let explosion = new Explosion(that);
 				inventory.add(explosion);	

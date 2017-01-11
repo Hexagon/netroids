@@ -17,9 +17,8 @@ var
       server.io.emit('entities', entity);
 
     },function (uuid) {
-      
+
       server.io.emit('remove', uuid);
-        
 
     },function (uuid) {
 
@@ -32,8 +31,7 @@ var
       // Respawn player
       player.respawn();
       server.io.emit('entities', [player]);
-      console.log('Respawned');
-      
+
     },function (uuid, delta) {
 
       scoreboard.score(uuid, delta);
@@ -114,40 +112,3 @@ setInterval(function () {
 
 // Start iteration
 iterate();
-
-// Create random powerups
-/*setInterval(function () {
-  // If we got less than 70 entities on gamefield
-  if(Object.keys(entities.all()).length < 70) {
-    powerups.request(1.0, function (powerup) {
-      if(powerup) {
-        server.io.emit('entities',[ 
-          entities.create({ 
-            "i": "Powerup",
-            "p": {
-              "x": Math.random()*30000-15000,
-              "y": Math.random()*30000-15000
-            },
-            "v": {
-              "x": Math.random()*0.0005-0.001,
-              "y": Math.random()*0.0005-0.001
-            },
-            "a": {
-              "d": 0.0,
-              "m": 0.0
-            },
-            "hp": {
-              "current": 1,
-              "max": 1
-            },
-            "r": 0.0,
-            "m": 10,
-            "t": powerup.type,
-            "ts": powerup.subtype,
-            "tc": powerup.class
-          })]
-        );
-      }
-    });
-  }
-},1000);*/

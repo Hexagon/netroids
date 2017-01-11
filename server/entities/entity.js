@@ -1,10 +1,9 @@
 var Vector = require('../util/vector.js'),
-	uuid = require('uuid');
+    unid = require('../util/unid.js');
 
 class Entity {
-	constructor (_uuid, inventory) {
-
-		this.uuid = _uuid || uuid();
+	constructor (_uuid) {
+		this.uuid = _uuid || unid();
 
 		this.position = new Vector();
 		this.velocity = new Vector();
@@ -85,8 +84,8 @@ class Entity {
 			r: this.rotation,
 			t: this.type,
 			ttl: this.ttl,
-			public: this.public,
-			private: includePrivate ? this.private : undefined
+			pu: this.public,
+			pr: includePrivate ? this.private : undefined
 		};
 
 	}
