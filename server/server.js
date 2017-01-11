@@ -12,7 +12,7 @@ http.get(/\/?.*/, restify.serveStatic({
 }));
 
 // Start webserver
-http.listen(process.env.PORT || 6660, function() {
+http.listen(process.env.PORT || 80, function() {
   console.log('%s listening at %s', http.name, http.url);
 });
 
