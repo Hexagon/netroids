@@ -27,13 +27,18 @@ module.exports = {
 	add: function (player) {
 
 		scoreboard[player.uuid] = {
-			n: "Player",
+			n: player.nick ? player.nick.substring(0, 15) : "[in lobby]",
 			uuid: player.uuid,
 			s: 0,
 			k: 0,
 			d: 0,
 			l: 0
 		};
+
+		updated();
+	},
+	setNick: function (uuid, nick) {
+		scoreboard[uuid].n = nick ? nick.substring(0, 15) : "[in lobby]";
 
 		updated();
 	},
@@ -48,8 +53,6 @@ module.exports = {
         if (!scoreboard[uuid]) return;
 
         scoreboard[uuid].k++;
-
-		console.log('Kill', uuid);
 
         updated();	
 	},

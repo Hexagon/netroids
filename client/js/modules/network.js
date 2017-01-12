@@ -37,6 +37,7 @@ define(['io', 'util/castrato'], function (io, bus) {
 		//bus.on("keys:change", (keys) => socket.emit("keys", keys) );
 		//bus.on('mouse:vector', (data) => socket.emit("mouse", data) );
 		bus.on("controls:state", (data) => socket.emit("controls", data) );
+		bus.on("player:nick", (data) => socket.emit("nick", data) );
 
 	};
 	

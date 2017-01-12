@@ -2,7 +2,11 @@
 <html>
     <head>
         <meta content='user-scalable=no' name='viewport' />
-        <title>Netroids Alpha - {{ version }}</title>
+        <title>Netroids</title>
+        <script>
+            var netroidsVersion = '{{ version }}',
+                netroidsRelease = 'Alpha';
+        </script>
         <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet">
         <link rel="stylesheet" href="css/font-awesome.min.css">
         <link rel="stylesheet" href="css/main.css">
@@ -10,16 +14,43 @@
     <body>
 
         <div id="loading" class="screen">
-            <div class="center">
-                <h1>NETROIDS</h1>
-                <div id="loadstatus">
-                    <h4>Loading ...</h4>
+            <div class="center row">
+                <div class="right column" id="status">
+                    <h1>LOADING</h1>
+                    <br>
+                    <br>
+                    <div id="loadstatus">
+                        <h4>Loading ...</h4>
+                    </div>
+                </div>
+                <div class="right column hidden" id="ready">
+                    <h1>CURRENT SCOREBOARD</h1>
+                    <br>
+                    <br>
+                    <table class="full">
+                        <thead>
+                            <tr>
+                                <td>PLAYER</td>
+                                <td>S</td>
+                                <td>K</td>
+                                <td>D</td>
+                                <td>PING</td>
+                            </tr>
+                        </thead>
+                        <tbody id="scoreboard_menu">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="left column">
+                    <h1>NETROIDS</h1>
+                    <br>
+                    <br>
+                    <input id="nick" maxlength="15" placeholder="Nick">
+                    <button id="join">Join</button>
+
                 </div>
             </div>
-        </div>
-
-        <div id="login" class="screen hidden">
-            
         </div>
 
         <!-- In game -->
@@ -49,7 +80,7 @@
                             <td>PING</td>
                         </tr>
                     </thead>
-                    <tbody id="scoreboard">
+                    <tbody id="scoreboard_ingame">
 
                     </tbody>
                     </table>
@@ -70,6 +101,7 @@
                     <span class="powerup-name">DAMAGE</span>
                 </div>
             </div>
+            <!--
             <div class="left">
                 <div class="resource resource-electricity" title="Electricity">
                     <i class="fa fa-bolt" aria-hidden="true"></i>
@@ -79,6 +111,7 @@
                     <span class="resource-value" id="resource-matter">-</span>
                 </div>
             </div>
+            -->
         </div>
 
         <div id="minimap">

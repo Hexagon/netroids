@@ -68,6 +68,13 @@ server.io.sockets.on('connection', function (socket) {
     }
   });
 
+  // Get update of nick
+  socket.on('nick', function (data) {
+    if(data && player) {
+      scoreboard.setNick(player.uuid, data);
+    }
+  });
+
   // Handle ping response (request is sent by server.js)
   socket.on('ping-response', function (pingTime) {
     if(pingTime && pingTime.t) {

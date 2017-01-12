@@ -31,7 +31,16 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 
 		remove = function (id) {
 			delete entities[id];
+		},
+
+		clear = function () {
+			playerUUID = undefined;
+			entities = {};
 		};
+
+	bus.on('network:disconnect', function (data) {
+		clear();
+	});
 
 	bus.on('network:entities', function (data) {
 		if (!data) return;
@@ -94,6 +103,9 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 		},
 		all: function () {
 			return entities;
+		},
+		clear: function () {
+			clear();
 		}
 	}
 

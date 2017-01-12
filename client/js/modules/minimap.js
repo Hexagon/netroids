@@ -25,7 +25,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector'], function(bus,
 			if(entity.t === "bullet") return;
 			
 			ctx.save();
-			ctx.translate(Math.round(entity.p.x/100+center.x),Math.round(entity.p.y/100+center.y));
+			ctx.translate(Math.round(entity.p.x/minimapScaleFactor+center.x),Math.round(entity.p.y/minimapScaleFactor+center.y));
 			if (entity.t == "player") {
 				ctx.fillStyle="red";	
 			} else if (entity.t == "asteroid") {
@@ -61,7 +61,7 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector'], function(bus,
 			context.fillRect(0, 0, dimensions.width, dimensions.height);
 
 			// Find center of screen
-			center = vector.sub(screenCenter, vector.div(player.p,200));
+			center = vector.sub(screenCenter, vector.div(player.p,minimapScaleFactor));
 
 			// Draw entities
 			context.strokeStyle="gray";

@@ -34,7 +34,31 @@ body, html { overflow: hidden; }
 #viewport {
 	z-index: 3;
 }
+.row {
+	width: 800px;
+	height: 400px;
+}
+.full {
+	width: 100%;
+}
+.column {
+	width: 369px;
+	height: 400px;
+	text-align: center;
+}
+.right.column {
+	border-left: rgb(64,64,128) 1px solid;
+	padding-left: 30px;
+}
+.left.column {
+	padding-right: 30px;
+}
 .texture { display: none; }
+hr {
+	margin-top: 30px;
+	margin-bottom: 30px;
+	border: rgb(64,64,128) 1px solid;
+}
 #menu {
 	position: absolute;
 	right: 0px;
@@ -139,4 +163,35 @@ body, html { overflow: hidden; }
 }
 .engaged {
 	background-color: rgba(255,196,196,0.8);
+}
+::-webkit-input-placeholder {
+   color: rgba(196,196,255,0.4);
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: rgba(196,196,255,0.4);  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: rgba(196,196,255,0.4);  
+}
+
+:-ms-input-placeholder {  
+   color: rgba(196,196,255,0.4);  
+}
+.column input, .column button {
+	text-align: center;
+	width: 100%;
+	padding: 10px;
+	font-size: 1.5rem;
+	box-sizing: border-box;
+	margin-bottom: 30px;
+	border-radius: 10px;
+	color: rgb(128,128,255);
+	border: rgb(96,96,128) 1px solid;
+	background-color: rgba(196,196,255,0.12);	
+}
+.column button {
+	color: rgb(128,128,255);
+	background-color: rgba(64,64,128,0.3);
 }

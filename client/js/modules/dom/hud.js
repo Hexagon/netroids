@@ -7,7 +7,8 @@ define(['util/castrato'], function(bus) {
 			players: 		document.getElementById('players'),
 			asteroids: 		document.getElementById('asteroids'),
 			latency: 		document.getElementById('latency'),
-			scoreboard: 	document.getElementById('scoreboard'),
+			scoreboard_ingame: 	document.getElementById('scoreboard_ingame'),
+			scoreboard_menu: 	document.getElementById('scoreboard_menu'),
 
 			/* Resources */
 			electricity: 	document.getElementById('resource-electricity'),
@@ -31,8 +32,8 @@ define(['util/castrato'], function(bus) {
 
 		playerChanged = function (player) {
 
-			elements.electricity.innerHTML = player.pr.resources.electricity;
-			elements.matter.innerHTML = player.pr.resources.matter;
+			//elements.electricity.innerHTML = player.pr.resources.electricity;
+			//elements.matter.innerHTML = player.pr.resources.matter;
 
 
 			for (id of ['rapid', 'spread', 'damage']) {
@@ -64,7 +65,8 @@ define(['util/castrato'], function(bus) {
 			data.scoreboard.forEach(function (row) {
 				innerHTML += '<tr><td class="' + (row.uuid == data.playerUUID ? 'good' : '') + '">' + row.n + '</td><td>' + row.s + '</td><td>' + row.k + '</td><td>' + row.d + '</td><td>' + row.l	 + '</td></tr>';
 			});
-			document.getElementById('scoreboard').innerHTML = innerHTML;
+			document.getElementById('scoreboard_menu').innerHTML = innerHTML;
+			document.getElementById('scoreboard_ingame').innerHTML = innerHTML;
 		};
 
 	bus.on('network:connect', 		function () { connection("up", "good"); });

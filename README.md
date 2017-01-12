@@ -11,7 +11,7 @@ Docker setup
 To run latest netroids with docker, exposed on host port 80, simply run the following command to pull it from docker hub
 
 ```bash
-sudo docker run -d --restart=always -p 80:80 hexagoon/netroids
+sudo docker run -d --restart=always -p 80:80 hexagon/netroids
 ```
 
 
@@ -42,6 +42,12 @@ Clone repo, enter directory
 
 Run with ```npm start```, access at ```http://localhost:80```
 
-To change port, set environment variable PORT to the desired number like
+To change port, set environment variable PORT to the desired number like below
 
-```PORT=80 npm start```
+Linux:
+
+```PORT=6660 npm start```
+
+Windows:
+
+```set PORT=660 && npm start```
