@@ -1,6 +1,6 @@
 { "name": "netroids",
   "description": "HTML5 Game",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "devDependencies": { },
   "dependencies": {
   	"socket.io": "*",
