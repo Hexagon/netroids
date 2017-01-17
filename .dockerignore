@@ -1,0 +1,7 @@
+# Node.js/npm stuff
+node_modules
+npm-debug.log
+
+# Git stuff
+.git
+.gitignore
