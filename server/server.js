@@ -1,19 +1,27 @@
 const
+  static = require('node-static'),
+  port = process.env.PORT || 80,
+  path = require('path');
 
-  restify 	= require('restify'),
-  http 		= restify.createServer(),
-  io 		= require('socket.io').listen(http.server),
-  path 		= require('path');
+var
+  file,
+  server,
+  io;
 
-// Serve static files
-http.get(/\/?.*/, restify.serveStatic({
-    directory: path.join(process.cwd(), 'client'),
-    default: 'index.html'
-}));
+// Set up static file location
+file = new static.Server(path.join(process.cwd(), 'client'));
 
-// Start webserver
-http.listen(process.env.PORT || 80, function() {
-  console.log('%s listening at %s', http.name, http.url);
+// Create http server, handle static assets
+server = require('http').createServer(function (req, res) {
+    req.addListener('end', function () { file.serve(req,res); } ).resume();
+});
+
+// Append socket.io to http server
+io = require('socket.io')(server),
+
+// Listen to port env:PORT or 8080
+server.listen(port, function(){
+  console.log('listening on *:'+port);
 });
 
 // Send ping request on set interval
@@ -43,6 +51,6 @@ io.sockets.on('connection', function (socket) {
 });
 
 module.exports = {
-	http,
+	server,
 	io
 };
