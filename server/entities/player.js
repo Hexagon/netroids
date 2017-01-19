@@ -69,7 +69,7 @@ class Player extends Entity {
 
       var 
         direction = -Math.atan2(this.local.controls.rotation.x, this.local.controls.rotation.y)+Math.PI/2,
-        magnitude = this.local.controls.accelerate ? Math.min(1,new Vector(this.local.controls.rotation.x,this.local.controls.rotation.y).distance(this.center))/50 : 0;
+        magnitude = this.local.controls.accelerate ? Math.min(1,new Vector(this.local.controls.rotation.x,this.local.controls.rotation.y).distance(this.center))/100 : 0;
 
       this.setAcceleration( direction, magnitude );
 

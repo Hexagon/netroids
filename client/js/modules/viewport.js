@@ -23,9 +23,49 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 
 		patterns = {},
 
+		stars = [],
+		starCount = 75,
+
 		createPattern = function (id, ctx) {
 			patterns[id] = ctx.createPattern(textures.get(id), "repeat");
 		},
+
+		drawBackground = function (player) {
+
+			// Need to add stars?
+			while(stars.length < starCount) {
+				
+				let starX, starY;
+
+				starX = (Math.random() * dimensions.width) + player.p.x;
+				starY = (Math.random() * dimensions.height) + player.p.y;
+
+				stars.push({x: starX, y: starY});
+			}
+
+			// Draw stars (and remove them if needed)
+			for(var i = stars.length-1; i >= 0; i--) {
+				let star = stars[i],
+					pX = star.x-player.p.x,
+					pY = star.y-player.p.y;
+
+				// Ignore if entity is out of bounds
+				if (!(pX>-50 && pX < dimensions.width +50 && pY > -50 && pY < dimensions.height + 50 )) {
+					stars.splice(i,1);
+					continue;
+				}
+	
+				context.beginPath();
+				context.save();
+				context.rect(pX,pY,1,1);
+				context.fillStyle="rgba(255,255,255,04)";
+				context.fill();
+				context.restore();
+
+			}
+			
+
+		};
 
 		drawPointer = function (entity, player, ctx) {
 
@@ -248,6 +288,8 @@ define(['util/castrato', 'dom/canvas', 'entities', 'util/vector', 'textures'], f
 
 			// Clear canvas
 			context.clearRect(0, 0, dimensions.width, dimensions.height);
+
+			drawBackground(player);
 
 			// Find center of screen
 			center = vector.sub(screenCenter, player.p);

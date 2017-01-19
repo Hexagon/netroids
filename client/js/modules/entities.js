@@ -74,30 +74,35 @@ define(['util/vector', 'util/castrato'], function(vector, bus) {
 
 			for(entityIdx in entities) {
 
-				let entity = entities[entityIdx];
+				let entity = entities[entityIdx],
+					ladvanceMs = advanceMs;
 
-				// Apply velocity to position
-				if (entity.latency) {
-				
-					let recvDelta = recDelta = new Date().getTime() - entity.received;
+				// This entity is just received, try to compensate for latency and stuff
+				if (entity.received) {
+					ladvanceMs = (new Date().getTime() - entity.received) + (entity.latency / 2);
 
-					entity.p.x += entity.v.x * (recvDelta + entity.latency / 2);
-					entity.p.y += entity.v.y * (recvDelta + entity.latency / 2);
-					
-					entity.latency = 0;
-
-				} else {
-					entity.p.x += entity.v.x * advanceMs;
-					entity.p.y += entity.v.y * advanceMs;
-				
+					// Reset latency and msBuffer
+					entity.received = 0;
 				}
+			
+				// Increment in steps of 17 ms, until there is less than 17 ms left
+				while(ladvanceMs > 0) {
+					let msLeft = Math.min(ladvanceMs,17);
+					if(msLeft >= 7) {
+						entity.v.x += entity.a.x;
+						entity.v.y += entity.a.y;
+					}
+					entity.p.x += entity.v.x * msLeft;
+					entity.p.y += entity.v.y * msLeft;
+					ladvanceMs -= msLeft;
+				}
+
 
 				// Currently only used for animating stuff
 				if(entity.ttl) {
 					entity.ttl -= advanceMs;
 				}
 				
-
 			}
 
 		},

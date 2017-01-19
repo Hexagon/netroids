@@ -1,6 +1,6 @@
 { "name": "netroids",
   "description": "HTML5 Game",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "devDependencies": { },
   "dependencies": {
     "node-static": "~0.7.9",

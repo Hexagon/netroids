@@ -74,13 +74,13 @@ define(['util/castrato'], function (bus) {
 
 	window.addEventListener('mousemove', function (e) {
 		let ts = new Date().getTime();
-		if (ts - lastMouseMove > 15 ) {
+		//if (ts - lastMouseMove > 15 ) {
 			bus.emit("pointer:position", {
 				x: e.clientX,
 				y: e.clientY
 			});
-			lastMouseMove = ts;
-		}
+		//	lastMouseMove = ts;
+		//}
 	});
 
 	window.addEventListener('touchstart', function (e) {

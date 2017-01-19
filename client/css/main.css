@@ -29,7 +29,6 @@ body, html { overflow: hidden; }
 }
 #backscroll {
 	z-index: 2;
-	opacity: 0.2;
 }
 #viewport {
 	z-index: 3;

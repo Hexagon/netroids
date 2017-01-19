@@ -34,7 +34,8 @@ class Entity {
 
 		// Properties only avaiable to server
 		this.local = { 
-			updated: true
+			updated: true,
+			msBuffer: 0
 		};
 
 	}
@@ -67,8 +68,15 @@ class Entity {
 	advance (advanceMs) {
 
 		if (this.ttl !== undefined) this.ttl -= advanceMs;
-		this.velocity.add(this.acceleration);
-		this.position.add(this.velocity.copy().mul(advanceMs));
+
+		let ladvanceMs = advanceMs + this.local.msBuffer;
+		while(ladvanceMs > 17) {
+			let msLeft = Math.min(ladvanceMs,17);
+			this.velocity.add(this.acceleration);
+			this.position.add(this.velocity.copy().mul(msLeft));
+			ladvanceMs -= msLeft;
+		}
+		this.local.msBuffer = ladvanceMs;
 
 	}
 

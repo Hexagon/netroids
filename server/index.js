@@ -38,7 +38,7 @@ var
 
     });
 
-    setTimeout(iterate, 25);
+    setTimeout(iterate, 34);
 
   };
 

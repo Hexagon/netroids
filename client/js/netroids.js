@@ -5,7 +5,7 @@ require.config({
 	}
 });
 
-define(['viewport', 'backdrop', 'backscroll', 'minimap', 'entities', 'network', 'textures', 'dom', 'util/castrato'], function(viewport, backdrop, backscroll, minimap, entities, network, textures, dom, bus) {
+define(['viewport', 'backdrop', 'minimap', 'entities', 'network', 'textures', 'dom', 'util/castrato'], function(viewport, backdrop, minimap, entities, network, textures, dom, bus) {
 
 	var
 		lastRedraw,
@@ -22,8 +22,6 @@ define(['viewport', 'backdrop', 'backscroll', 'minimap', 'entities', 'network', 
 
 		entities.advance(passed);
 		
-		backscroll.scroll(passed);
-
 		viewport.redraw();
 		minimap.redraw();
 
@@ -55,9 +53,9 @@ define(['viewport', 'backdrop', 'backscroll', 'minimap', 'entities', 'network', 
 		backdrop.create();
 		backdrop.redraw();
 
-		dom.addLoadStatus('Creating backscroll ...');
+		/*dom.addLoadStatus('Creating backscroll ...');
 		backscroll.create();
-		backscroll.redraw();
+		backscroll.redraw();*/
 
 		dom.addLoadStatus('Creating viewport ...');
 		viewport.create();
